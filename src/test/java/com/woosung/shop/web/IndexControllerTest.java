@@ -1,4 +1,4 @@
-package com.woosung.shop.controller;
+package com.woosung.shop.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
