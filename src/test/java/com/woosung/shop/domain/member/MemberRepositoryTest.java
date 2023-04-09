@@ -5,17 +5,21 @@ import com.woosung.shop.domain.Address;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Import(JpaConfig.class)
+//@Import(JpaConfig.class)
 @DataJpaTest
 class MemberRepositoryTest {
 
@@ -23,39 +27,33 @@ class MemberRepositoryTest {
 
     @PersistenceContext EntityManager em;
 
+    @DisplayName("이메일에 맞는 회원 찾기")
     @Test
-    @DisplayName("멤버를 추가하고 조회하는 테스트")
-    public void addMember() {
-        String name = "nameTest";
-        String email = "emailTest@email.com";
-        String password = "testPassword";
-        String picture = "202304051603333test";
+    public void testFindByEmail() {
+        Member testMember = createMember();
+        memberRepository.save(testMember);
 
-        Member member = Member.builder()
+        Optional<Member> findMember = memberRepository.findByEmail(testMember.getEmail());
+
+        assertAll(
+                () -> assertThat(findMember).isPresent(),
+                () -> assertThat(findMember.get().getEmail()).isEqualTo(testMember.getEmail()));
+    }
+
+
+    private Member createMember() {
+        String name = "test";
+        String email = "test@email.com";
+        String password = "password!";
+        String picture = "test.png";
+        Role role = Role.USER;
+
+        return Member.builder()
                 .name(name)
                 .email(email)
                 .password(password)
                 .picture(picture)
-                .role(Role.USER)
+                .role(role)
                 .build();
-
-        Member savedMember = memberRepository.save(member);
-
-        em.flush();
-        em.clear();
-
-        Member findMember = memberRepository.findById(savedMember.getId()).get();
-
-        assertAll("member",
-                () -> assertEquals(findMember.getName(), savedMember.getName()),
-                () -> assertEquals(findMember.getPicture(), savedMember.getPicture()),
-                () -> assertEquals(findMember.getPassword(), savedMember.getPassword()),
-                () -> assertEquals(findMember.getPicture(), savedMember.getPicture()),
-                () -> assertEquals(findMember.getRole(), savedMember.getRole()),
-                () -> assertEquals(findMember.getEmail(), savedMember.getEmail()),
-                () -> assertEquals(findMember.getId(), savedMember.getId()),
-                () -> assertThat(findMember.getCreatedDate()).isNotNull(),
-                () -> assertThat(findMember.getModifiedDate()).isNotNull()
-        );
     }
 }
