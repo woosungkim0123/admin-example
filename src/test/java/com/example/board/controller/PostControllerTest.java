@@ -21,7 +21,7 @@ class PostControllerTest {
     public PostControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
     }
-    @Disabled("developing")
+
     @DisplayName("[view][GET] List Post Page - success")
     @Test
     public void requestingPostsView_thenReturnPostsView() throws Exception {
@@ -30,7 +30,7 @@ class PostControllerTest {
         // when & then
         mvc.perform(get("/posts"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("posts/index"))
                 .andExpect(model().attributeExists("posts"));
     }
