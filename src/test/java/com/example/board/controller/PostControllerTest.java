@@ -44,7 +44,7 @@ class PostControllerTest {
         // when & then
         mvc.perform(get("/posts/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("posts/detail"))
                 .andExpect(model().attributeExists("post"))
                 .andExpect(model().attributeExists("postComments"));
@@ -59,7 +59,7 @@ class PostControllerTest {
         // when & then
         mvc.perform(get("/posts/search"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("posts/search"));
     }
 
@@ -72,7 +72,7 @@ class PostControllerTest {
         // when & then
         mvc.perform(get("/posts/search-hashtag"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("posts/search-hashtag"));;
     }
 }
