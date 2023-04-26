@@ -35,7 +35,6 @@ class PostControllerTest {
                 .andExpect(model().attributeExists("posts"));
     }
 
-    @Disabled("developing")
     @DisplayName("[view][GET] Detail Post Page - success")
     @Test
     public void requestingPostDetailView_thenReturnPostDetailView() throws Exception {
