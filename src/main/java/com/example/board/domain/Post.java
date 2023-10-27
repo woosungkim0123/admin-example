@@ -9,7 +9,7 @@ import java.util.Set;
 import static lombok.AccessLevel.*;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = PROTECTED)
 @Table(indexes = {
         @Index(columnList = "title"),
@@ -24,7 +24,7 @@ public class Post extends AuditingFields {
     private Long id;
 
     @Setter
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 1000)
     private String title; // 제목
 
     @Setter
@@ -34,19 +34,24 @@ public class Post extends AuditingFields {
     @Setter
     private String hashtag; // 해시태그
 
-    @OrderBy("id")
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private UserAccount userAccount;
+
     @ToString.Exclude
+    @OrderBy("createdAt DESC")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private final Set<PostComment> postComments = new LinkedHashSet<>();
 
-    private Post(String title, String content, String hashtag) {
+    private Post(UserAccount userAccount, String title, String content, String hashtag) {
+        this.userAccount = userAccount;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
     }
 
-    public static Post of(String title, String content, String hashtag) {
-        return new Post(title, content, hashtag);
+    public static Post of(UserAccount userAccount,String title, String content, String hashtag) {
+        return new Post(userAccount, title, content, hashtag);
     }
 
     @Override
