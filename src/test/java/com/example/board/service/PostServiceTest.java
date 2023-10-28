@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 
@@ -30,11 +31,17 @@ class PostServiceTest {
     @DisplayName("게시글을 검색하면 해당 게시글 리스트를 반환한다.")
     @Test
     void givenSearchParameter_whenSearchPosts_thenReturnPosts() {
+        SearchType searchType = SearchType.TITLE;
+        String searchKeyword = "title";
+        Pageable pageable = Pageable.ofSize(20);
+        given(postRepository.findByTitleContaining(searchKeyword, pageable)).willReturn(Page.empty());
 
-        Page<PostDto> dtoList = postService.searchPosts(SearchType.TITLE, "search keyword"); // 제목,본문,ID, 닉네임,해시태그
+        // When
+        Page<PostDto> articles = postService.searchPosts(searchType, searchKeyword, pageable);
 
-        // then
-        assertThat(dtoList).isNotNull();
+        // Then
+        assertThat(articles).isEmpty();
+        then(postRepository).should().findByTitleContaining(searchKeyword, pageable);
     }
 
     @DisplayName("게시글을 조회하면 게시글을 반환한다.")
@@ -52,7 +59,7 @@ class PostServiceTest {
     @Test
     void givenPostInfo_whenSavingPost_thenSavesPost() {
         // given
-        PostDto dto = PostDto.of(LocalDateTime.now(), "test", "title", "content", "#hastag");
+        PostDto dto = PostDto.of(1L, null, "title", "content", "#hastag", LocalDateTime.now(), "createdBy", LocalDateTime.now(), "modifiedBy");
         given(postRepository.save(any(Post.class))).willReturn(null);
 
         // when
