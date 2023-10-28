@@ -1,19 +1,45 @@
 package com.example.board.dto;
 
-import com.querydsl.codegen.Serializer;
+import com.example.board.domain.Post;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record PostDto(
-        LocalDateTime createdAt,
-        String createdBy,
+        Long id,
+        UserAccountDto userAccountDto,
         String title,
         String content,
-        String hashtag
+        String hashtag,
+        LocalDateTime createdAt,
+        String createdBy,
+        LocalDateTime modifiedAt,
+        String modifiedBy
 ) {
-    public static PostDto of(LocalDateTime createdAt, String createdBy, String title, String content, String hashtag) {
-        return new PostDto(createdAt, createdBy, title, content, hashtag);
+    public static PostDto of(Long id, UserAccountDto userAccountDto, String title, String content, String hashtag, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
+        return new PostDto(id, userAccountDto, title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
+    }
+
+    public static PostDto from(Post entity) {
+        return new PostDto(
+                entity.getId(),
+                UserAccountDto.from(entity.getUserAccount()),
+                entity.getTitle(),
+                entity.getContent(),
+                entity.getHashtag(),
+                entity.getCreatedAt(),
+                entity.getCreatedBy(),
+                entity.getModifiedAt(),
+                entity.getModifiedBy()
+        );
+    }
+
+    public Post toEntity() {
+        return Post.of(
+                userAccountDto.toEntity(),
+                title,
+                content,
+                hashtag
+        );
     }
 }
 
