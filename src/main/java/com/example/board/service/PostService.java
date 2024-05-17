@@ -21,6 +21,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostDto> searchPosts(SearchType searchType, String searchKeyword, Pageable pageable) {
+
         if (searchKeyword == null || searchKeyword.isBlank()) {
             return postRepository.findAll(pageable).map(PostDto::from);
         }
